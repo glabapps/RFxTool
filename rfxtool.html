@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFx Selector Decision Tool | Procurement Decision Engine</title>
+    <meta name="description" content="Master strategic sourcing with the definitive RFx Selector Decision Tool. Quickly determine the best procurement methodology (RFI, RFP, RFQ, RFS) for any project goal: cost control, innovation, or market discovery. Achieve procurement maturity." />
+    <meta name="keywords" content="RFx selector, procurement decision tool, strategic sourcing, RFI, RFP, RFQ, RFS, procurement maturity, vendor selection, contract management, supply chain" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Favicon --><link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAxElEQVR42mP4////fwYGIARmZiYlqGho8B+tT6Q3A5sQ9v+qj64C2sEHBhMzA8P/pL+iU3gG1P+g3w8uBNP/oX4bWJzIeWDkAPc/pA9bBawg5hY1sBwA7n9oH7YKWAGDhw+bGFh+b/rI/t/1iY+g+R/9D/gC/g/9hY0FmGng/If6f2A+A2B+B5MDBgZAO9/oH0m4LwD9v+i/h04DSDj4X7+/GdjYQ8oBmbmHxlMzAAMdGBhYWNgAALx/7E/1/WJj4Dk////JAB/gJ1RDA2MAAAgq/f6wR6R8QAAAABJRU5ErkJggg==">
+    <style>
+        /* KEYFRAMES */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* DARK MODE NEON BASE STYLING */
+        body { 
+            background-color: #0A0A0A; /* Extremely dark base */
+            color: #E0E0E0; 
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            /* NEON GLOW CARD - INTENSITY REDUCED */
+            background-color: #1A1A1A; 
+            border-radius: 18px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.07); /* Reduced from 20px to 10px, 0.1 to 0.07 */
+            max-width: 650px;
+            width: 100%;
+            padding: 40px;
+            border: 1px solid #333; 
+        }
+
+        /* Author Icon at Bottom Right */
+        #author-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        #author-icon:hover {
+            transform: scale(1.1);
+        }
+        #author-icon img {
+            width: 50px; /* Increased size */
+            height: 50px;
+            border-radius: 50%; /* Ensure it's perfectly circular */
+            border: 2px solid #00FFFF; /* Subtle neon border */
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4); /* Neon glow */
+        }
+        
+        /* STATS CARD - Integrated Bottom Bar (For external counter) */
+        #stats-card {
+            display: flex;
+            justify-content: center;
+            background-color: #121212; 
+            border-radius: 10px;
+            padding: 12px 20px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            box-shadow: 0 0 5px rgba(121, 194, 255, 0.1); /* Reduced intensity */
+            /* New centering styles */
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Visitor Counter Styling */
+        #external-counter-wrapper {
+            text-align: center;
+            /* Ensure text contrast for external script */
+            color: #E0E0E0 !important;
+            font-size: 1rem;
+        }
+        #external-counter-wrapper a {
+            color: #00FFFF; /* Neon link color */
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+        
+        /* Specific Footer Counter Styles - Center Alignment */
+        #visitor-counter-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #B0B0B0;
+            font-size: 0.9rem;
+            text-shadow: 0 0 3px rgba(0, 255, 255, 0.2);
+            /* Center the block itself within the container */
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 300px; /* Limit width for cleaner centering */
+        }
+        #visitor-counter-footer a {
+            color: #00FFFF;
+            text-decoration: none;
+        }
+
+        /* Question Blocks - Dark Containers */
+        .question-container {
+            margin-bottom: 1.5rem;
+            padding: 1.25rem;
+            background-color: #1E1E1E;
+            border: 2px solid #3A3A3A;
+            border-radius: 12px;
+            box-shadow: 0 0 3px rgba(255, 255, 255, 0.05); /* Reduced intensity */
+            transition: box-shadow 0.3s, border-color 0.3s;
+        }
+        /* Highlight Style: Bright Neon Blue Glow - INTENSITY REDUCED */
+        .question-container.highlight {
+            border-color: #00FFFF; 
+            box-shadow: 0 0 7px #00FFFF, inset 0 0 3px #00FFFF; /* Reduced blur/spread */
+        }
+
+        .question-text { color: #E0E0E0 !important; }
+
+        /* Answer Buttons - Dark Base */
+        .answer-buttons button {
+            background-color: #2C2C2C; /* Dark button base */
+            color: #E0E0E0;
+            border: none;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 0 3px rgba(255, 255, 255, 0.05); /* Reduced intensity */
+            transition: all 0.2s ease-in-out;
+        }
+        .answer-buttons button:hover { 
+            background-color: #4A4A4A;
+            transform: scale(1.02);
+        }
+        .answer-buttons button.selected {
+            background-color: #2ECC71; /* Bright Green for selected */
+            color: white; 
+            transform: scale(1.01); 
+            /* Neon Green Glow on Select - INTENSITY REDUCED */
+            box-shadow: 0 0 10px #2ECC71, 0 0 3px #2ECC71; 
+        }
+
+        /* Final CTAs */
+        .final-cta {
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Reduced intensity */
+            transition: all 0.2s;
+            display: block; 
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 12px;
+        }
+        .final-cta:hover { transform: translateY(-1px); }
+        
+        /* 1. Ghost/Outline Style for Reset Button */
+        .final-cta-ghost {
+            background-color: transparent !important;
+            color: #00FFFF !important; /* Cyan outline */
+            border: 1px solid #00FFFF;
+            box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); /* Reduced intensity */
+        }
+        .final-cta-ghost:hover {
+            background-color: rgba(0, 255, 255, 0.1) !important;
+        }
+        
+        /* 2. Custom LinkedIn Button Style */
+        .libutton {
+            background-color: #0A66C2 !important;
+            color: #ffffff !important;
+            height: 40px; 
+            border-radius: 8px; 
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            font-size: 16px;
+            box-shadow: 0 0 10px rgba(10, 102, 194, 0.4); /* Reduced intensity */
+        }
+        
+        /* Result Box Overrides */
+        #result-box { 
+            border: 1px solid #3A3A3A; 
+            background-color: #222; 
+            border-radius: 15px; 
+            transition: all 0.5s ease-in-out;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Reduced intensity */
+        }
+        
+        /* Rank/Badge Styling - Uses dynamic color as strong accent */
+        #rfx-rank {
+            border-radius: 10px; 
+            transition: all 0.5s;
+            /* Dynamic Neon Glow is set via JS using resultColor - INTENSITY REDUCED in JS */
+        }
+        
+        /* PROGRESS BAR */
+        #progress-bar-container {
+            border-radius: 10px;
+            background-color: #3A3A3A; 
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4); 
+            padding: 3px;
+        }
+        
+        /* ELABORATIVE GOAL STYLING */
+        .elaborative-goal {
+            text-align: left;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #121212; /* Darker interior for contrast */
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+        .elaborative-goal strong {
+            color: #00FFFF; /* Bright cyan accent for titles */
+        }
+        .elaborative-goal ul {
+            list-style-type: none; 
+            margin-left: 0;
+            padding-left: 0;
+            line-height: 1.6; 
+            font-size: 0.95rem;
+            color: #E0E0E0;
+        }
+
+        /* Hidden SEO text for crawlers */
+        .seo-text { display: none; }
+
+        /* NEON TEXT SHADOWS for final result - INTENSITY REDUCED */
+        .neon-text-shadow-blue { text-shadow: 0 0 3px #3498DB, 0 0 6px #3498DB; }
+        .neon-text-shadow-green { text-shadow: 0 0 3px #2ECC71, 0 0 6px #2ECC71; }
+        .neon-text-shadow-yellow { text-shadow: 0 0 3px #F3C641, 0 0 6px #F3C641; }
+        .neon-text-shadow-purple { text-shadow: 0 0 3px #9B59B6, 0 0 6px #9B59B6; }
+    </style>
+</head>
+<body>
+    
+    <div class="main-wrapper">
+        <div class="container">
+            <!-- MINIMALIST HEADER --><h1 class="text-3xl font-extrabold text-procure-blue text-center mb-1" style="color: #00FFFF; text-shadow: 0 0 5px #00FFFF;">RFx Selector Decision Tool</h1>
+            <p class="text-center text-gray-400 mb-8 text-lg">Find the right tool (RFI, RFP, RFQ, RFS) for any strategic sourcing goal.</p>
+            
+            <!-- Progress Bar --><div class="mb-6 mt-6">
+                <div class="text-sm font-medium mb-1" style="color: #B0B0B0;" id="progress-text">Progress: 0/4 Questions</div>
+                <div id="progress-bar-container" class="w-full h-3">
+                    <div id="progress-bar" class="h-full rounded-full" style="background-color: #3498DB; width: 0%; transition: width 0.3s;"></div>
+                </div>
+            </div>
+
+            <!-- Question Flow Container --><div id="question-flow" class="divide-y divide-transparent">
+                <!-- Question Block 1 - What to Buy --><div id="q1" class="question-container">
+                    <p class="question-text font-semibold">1. <strong>What to Buy:</strong> Do we know <strong>exactly what we need</strong> to buy (all specifications and requirements are final)?</p>
+                    <div class="answer-buttons flex space-x-4">
+                        <button data-q="q1" onclick="setAnswer('q1', 'Yes', this)" class="flex-1">Yes</button>
+                        <button data-q="q1" onclick="setAnswer('q1', 'No', this)" class="flex-1">No</button>
+                    </div>
+                </div>
+
+                <!-- Question Block 2 - Why We're Buying --><div id="q2" class="question-container hidden">
+                    <p class="question-text font-semibold">2. <strong>Why We're Buying:</strong> Is the main goal simply to get the **lowest, competitive price** for this item or service?</p>
+                    <div class="answer-buttons flex space-x-4">
+                        <button data-q="q2" onclick="setAnswer('q2', 'Yes', this)" class="flex-1">Yes</button>
+                        <button data-q="q2" onclick="setAnswer('q2', 'No', this)" class="flex-1">No</button>
+                    </div>
+                </div>
+
+                <!-- Question Block 3 - Future Focus --><div id="q3" class="question-container hidden">
+                    <p class="question-text font-semibold">3. <strong>Future Focus:</strong> Are we looking for **new ideas or creative solutions** from the supplier to solve a business problem?</p>
+                    <div class="answer-buttons flex space-x-4">
+                        <button data-q="q3" onclick="setAnswer('q3', 'Yes', this)" class="flex-1">Yes</button>
+                        <button data-q="q3" onclick="setAnswer('q3', 'No', this)" class="flex-1">No</button>
+                    </div>
+                </div>
+
+                <!-- Question Block 4 - Who to Ask --><div id="q4" class="question-container hidden">
+                    <p class="question-text font-semibold">4. <strong>Who to Ask:</strong> Do we **already know** which suppliers can deliver this, or do we need to search the market?</p>
+                    <div class="answer-buttons flex space-x-4">
+                        <button data-q="q4" onclick="setAnswer('q4', 'Yes', this)" class="flex-1">Yes</button>
+                        <button data-q="q4" onclick="setAnswer('q4', 'No', this)" class="flex-1">No</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Box --><div id="result-box" class="mt-8 p-5 rounded-xl text-center" style="border-color: #3A3A3A;">
+                <h2 class="text-xl font-bold mb-2" style="color: #E0E0E0;">Suggested RFx:</h2>
+                <p id="rfx-result" class="text-2xl font-extrabold text-gray-500">Answer the first question to begin...</p>
+            </div>
+            
+            <!-- CREATIVE BUTTON ARRANGEMENT --><!-- 1. Reset Button (Ghost Style - Muted Action) --><button id="reset-button" onclick="resetTool()" class="final-cta final-cta-ghost mt-6">
+                Start Over
+            </button>
+
+            <!-- 2. LinkedIn Follow Button (Primary CTA - Branded) --><a class="libutton" href="https://www.linkedin.com/in/bhsuryavanshi/" target="_blank">
+                Follow on LinkedIn
+            </a>
+            
+            <!-- 3. VISITOR COUNTER (Center Bottom) -->
+            <div id="visitor-counter-footer" style="margin-left: auto; margin-right: auto; max-width: 300px;">
+                <div style="text-align: center; margin-top: 20px;">
+                    <span style="color: #00FFFF; font-weight: bold; margin-bottom: 5px; display: block;">Visitor 👥</span>
+                    <!-- External Counter Script -->
+                    <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=61104d4a795ab3cb9a99bae9efe1d2b33d926fe2'></script>
+                    <script type="text/javascript" src="https://counter.websiteout.com/js/15/0/0/0"></script>
+                    <div style="margin-top: 5px; font-size: 0.8rem;">
+                        <a href='http://www.freevisitorcounters.com' style="text-decoration: none;" target="_blank">Visitor Count</a>
+                    </div>
+                </div>
+            </div>
+            <!-- End Visitor Counter -->
+
+            <p class="text-center mt-6 text-sm text-gray-600">Source Smarter. Drive Value.</p>
+        </div>
+        
+        <!-- HIDDEN SEO TEXT FOR CRAWLERS --><div class="seo-text">
+                <h3>Procurement Decision Engine: RFI, RFP, RFQ, RFS</h3>
+                <p>The RFx Selector Decision Tool is designed for strategic sourcing and procurement professionals to determine the most effective Request for X method. It provides a maturity roadmap for RFI (Market Discovery), RFQ (Cost Control), RFP (Complex Solution Development), and RFS (Innovation Partnership). Achieve superior vendor selection and contract outcomes by choosing the right strategic tool.</p>
+            </div></div>
+
+    <!-- Image Icon at Bottom Right -->
+    <a id="author-icon" href="https://www.linkedin.com/in/bhsuryavanshi/" target="_blank">
+        <img src="https://media.licdn.com/dms/image/v2/D4D03AQE6x5_pA_jJhg/profile-displayphoto-scale_200_200/B4DZpKxEcUJcAY-/0/1762190973111?e=1764806400&v=beta&t=LSwbFFGu0Pkw7HXh8NHpGEHC-xFN9HTG6sZ1PdgAFM4" alt="B.H. Suryavanshi Profile Icon">
+    </a>
+
+    <script>
+        // --- Custom Color Map ---
+        const CUSTOM_COLORS = {
+            'rfi-color': '#F3C641', // Gold/Yellow (RFI)
+            'rfp-color': '#3498DB', // Bright Blue (RFP)
+            'rfq-color': '#2ECC71', // Bright Green (RFQ)
+            'rfs-color': '#9B59B6', // Bright Purple (RFS)
+            'procure-blue': '#3498DB', // Default/Progress Blue
+            'flat-dark': '#2C3E50' // Dark text/header
+        };
+
+        // Map the color keys to the appropriate neon text shadow class
+        const NEON_TEXT_SHADOWS = {
+            'rfi-color': 'neon-text-shadow-yellow',
+            'rfp-color': 'neon-text-shadow-blue',
+            'rfq-color': 'neon-text-shadow-green',
+            'rfs-color': 'neon-text-shadow-purple',
+        };
+
+        function getTailwindColor(colorKey) {
+            return CUSTOM_COLORS[colorKey] || '#6b7280'; 
+        }
+        
+        // --- CORE RFX LOGIC ---
+        
+        const answers = { q1: null, q2: null, q3: null, q4: null };
+        const questionOrder = ['q1', 'q2', 'q3', 'q4'];
+        const totalQuestions = questionOrder.length;
+        let currentQuestionIndex = 0;
+
+        const rfxRanks = {
+            "RFI (Request for Information)": { name: "Discovery Lead", color: 'rfi-color', icon: "🔍" },
+            "RFQ (Request for Quotation)": { name: "Execution Specialist", color: 'rfq-color', icon: "💰" },
+            "RFP (Request for Proposal)": { name: "Value Integrator", color: 'rfp-color', icon: "🏗️" },
+            "RFS (Request for Solution)": { name: "Innovation Partner", color: 'rfs-color', icon: "🚀" }
+        };
+
+        function updateProgress() {
+            const answeredCount = Object.values(answers).filter(a => a !== null).length;
+            const percentage = (answeredCount / totalQuestions) * 100;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+            document.getElementById('progress-text').textContent = `Progress: ${answeredCount}/${totalQuestions} Questions`;
+        }
+
+        function showQuestion(id) {
+            // Remove highlight from all containers before showing the next one
+            document.querySelectorAll('.question-container').forEach(q => q.classList.remove('highlight'));
+            document.querySelectorAll('.question-container').forEach(q => q.classList.add('hidden'));
+            
+            const target = document.getElementById(id);
+            if (target) {
+                target.classList.remove('hidden');
+                target.classList.add('highlight'); // Highlight the active tab
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function setAnswer(questionId, answer, buttonElement) {
+            answers[questionId] = answer;
+            
+            const qDiv = document.getElementById(questionId);
+            qDiv.querySelectorAll('button').forEach(btn => {
+                btn.classList.remove('selected');
+                // Reset to default button style
+                btn.style.background = '#2C2C2C'; 
+                btn.style.color = '#E0E0E0';
+                btn.style.transform = 'none';
+                btn.style.boxShadow = '0 0 5px rgba(255, 255, 255, 0.1)';
+            });
+
+            // Apply selected button style
+            buttonElement.classList.add('selected');
+            buttonElement.style.transform = 'translateY(0)'; 
+            // Button glow is controlled by CSS class (2ECC71)
+            
+            updateProgress();
+
+            const answeredCount = Object.values(answers).filter(a => a !== null).length;
+            
+            if (answeredCount === totalQuestions) {
+                // Remove highlight from the last question
+                qDiv.classList.remove('highlight');
+                // Ensure the final question is shown, then determine the result
+                showQuestion(questionId); 
+                determineRFx();
+            } else {
+                currentQuestionIndex = questionOrder.indexOf(questionId);
+                if (currentQuestionIndex < totalQuestions - 1) {
+                    // Remove highlight from the just-answered question
+                    qDiv.classList.remove('highlight');
+                    showQuestion(questionOrder[currentQuestionIndex + 1]);
+                }
+            }
+        }
+
+        function determineRFx() {
+            const C_SCOPE = answers.q1;
+            const C_PRICE = answers.q2;
+            const C_INNOVATE = answers.q3;
+            const C_KNOW_SUPPLIERS = answers.q4;
+
+            let primaryResult = "RFP (Request for Proposal)"; 
+            let stagedProcess = null;
+
+            if (C_SCOPE === "Yes" && C_PRICE === "Yes") {
+                primaryResult = "RFQ (Request for Quotation)";
+            }
+            else if (C_SCOPE === "No" && C_INNOVATE === "Yes") {
+                primaryResult = "RFS (Request for Solution)";
+            }
+            else if (C_SCOPE === "No" && C_KNOW_SUPPLIERS === "No") {
+                primaryResult = "RFI (Request for Information)";
+                stagedProcess = "RFI → RFP (or RFQ)";
+            }
+            
+            // Hide all questions and show only the result box content
+            document.querySelectorAll('.question-container').forEach(q => q.classList.add('hidden'));
+            
+            addContextAndWarning(primaryResult, stagedProcess, C_SCOPE, C_PRICE, C_INNOVATE);
+            
+            // No increment needed for external counter
+        }
+
+        function addContextAndWarning(primaryResult, stagedProcess, C_SCOPE, C_PRICE, C_INNOVATE) {
+            
+            const rank = rfxRanks[primaryResult];
+            const resultColor = getTailwindColor(rank.color);
+            const neonShadowClass = NEON_TEXT_SHADOWS[rank.color];
+            
+            let htmlContent = '';
+            let warning = "";
+
+            const resultBox = document.getElementById('result-box');
+            resultBox.classList.add('achievement-unlocked'); 
+
+            // 1. Rank & Result Name (with Neon Glow on Rank/Result text)
+            // BOX SHADOW INTENSITY REDUCED HERE
+            htmlContent += `<div id="rfx-rank" style="background-color: ${resultColor}; color: white; margin: 0 auto; border-radius: 6px; padding: 12px 25px; font-weight: 800; font-size: 1.3em; letter-spacing: 0.05em; text-transform: uppercase; box-shadow: 0 0 10px ${resultColor};">${rank.icon} ACHIEVEMENT UNLOCKED: ${rank.name}</div>`;
+            
+            htmlContent += `
+                <h2 class="text-xl font-bold mb-2 mt-5" style="color: #E0E0E0;">Suggested RFx:</h2>
+                <p id="rfx-result" class="text-4xl font-extrabold ${neonShadowClass}" style="color: ${resultColor};">${primaryResult}</p>
+            `;
+            
+            // 2. Elaborative Goal Section (NEW - Restored detailed list)
+            let goalHTML = '';
+            const goals = {
+                "RFI (Request for Information)": {
+                    title: "Goal: Market Discovery and Intelligence",
+                    bullets: [
+                        "🔍 Identify all potential suppliers and their core capabilities.",
+                        "🧭 Gather general market pricing, technology, and trend insights.",
+                        "📜 Build a qualified shortlist for follow-up tenders (RFP/RFQ).",
+                        "📄 Use <strong>standardized questionnaires</strong> focused on qualifications and experience, not price.",
+                        "🔔 <strong>Formally close the RFI</strong> and notify non-shortlisted vendors of next steps."
+                    ]
+                },
+                "RFQ (Request for Quotation)": {
+                    title: "Goal: Efficiency and Cost Control",
+                    bullets: [
+                        "💰 Achieve the <strong>lowest compliant price</strong> for standardized goods/services.",
+                        "⏱️ Minimize transactional procurement cycle time through automation.",
+                        "✅ Ensure <strong>strict adherence</strong> to non-negotiable specifications and quality standards.",
+                        "💻 Use <strong>e-sourcing or reverse auctions</strong> for rapid price discovery and negotiation.",
+                        "🎯 <strong>Award automatically</strong> based on price, assuming compliance (3-bids-and-buy)."
+                    ]
+                },
+                "RFP (Request for Proposal)": {
+                    title: "Goal: Complex Solution Development",
+                    bullets: [
+                        "🏗️ Compare technical methodology, implementation plans, and unique value propositions.",
+                        "📋 Evaluate solutions where scope is clear, but the approach is complex.",
+                        "🤝 Select the partner offering the best overall value, weighing quality and risk over pure cost.",
+                        "📊 Implement a <strong>weighted scoring matrix</strong> involving multiple stakeholders (e.g., IT, Legal).",
+                        "🎬 Conduct <strong>supplier demonstrations</strong> or Proofs of Concept (POCs) before final award."
+                    ]
+                },
+                "RFS (Request for Solution)": {
+                    title: "Goal: Strategic Problem Solving and Innovation",
+                    bullets: [
+                        "💡 Source creative, outcome-focused solutions to defined business problems.",
+                        "📈 Tap into supplier expertise to develop a novel, long-term strategy.",
+                        "⭐ Establish a partnership based on mutual value creation and shared risk/reward.",
+                        "⚖️ Structure the evaluation criteria around <strong>potential business impact and ROI</strong>, not fixed price.",
+                        "🗺️ Co-create a <strong>joint success roadmap</strong> with the selected partner <i>before</i> contract execution."
+                    ]
+                }
+            };
+
+            const selectedGoal = goals[primaryResult];
+            if (selectedGoal) {
+                goalHTML += `<div class="elaborative-goal">`;
+                goalHTML += `<strong style="color: #00FFFF;">${selectedGoal.title}</strong>`;
+                goalHTML += `<ul>`;
+                selectedGoal.bullets.forEach(bullet => {
+                    goalHTML += `<li>${bullet}</li>`;
+                });
+                goalHTML += `</ul></div>`;
+            }
+            
+            htmlContent += goalHTML;
+
+
+            // 3. Warning/Advanced Tip Section
+            const contextMap = {
+                "RFQ (Request for Quotation)": {
+                    warning: C_INNOVATE === "Yes" ? "WARNING: This tool is too simple for innovation. The supplier will deliver exactly what you asked for, not necessarily the best solution. Reconsider RFS." : ""
+                },
+                "RFP (Request for Proposal)": {
+                    warning: C_SCOPE === "No" ? "CAUTION: Since specs aren't 100% clear, ensure your evaluation criteria heavily weight technical methodology over price." : ""
+                }
+                ,
+                "RFS (Request for Solution)": {
+                    warning: C_PRICE === "Yes" ? "WARNING: Don't anchor on lowest price. RFS is about value creation; focusing only on cost will stifle innovation." : ""
+                },
+                "RFI (Request for Information)": {
+                    warning: C_PRICE === "Yes" ? "WARNING: Do NOT use RFI to set prices. It provides directional cost only. Follow up with an RFQ or RFP." : ""
+                }
+            };
+            
+            warning = contextMap[primaryResult].warning;
+
+            if (stagedProcess) {
+                htmlContent += `<div class="staged-process mt-4 p-3 rounded-md font-semibold" style="border: 1px dashed ${resultColor}; color: #B0B0B0; background-color: #3A3A3A;">💡 <strong>ADVANCED TIP:</strong> Consider a staged process: <strong>${stagedProcess}</strong> to manage risk and increase competition.</div>`;
+            }
+
+            if (warning) {
+                htmlContent += `<div class="warning-box mt-4 p-3 rounded-md font-semibold" style="border: 1px dashed #E74C3C; color: #E74C3C; background-color: #2C2C2C;">⚠️ <strong>Maturity Warning:</strong> ${warning}</div>`;
+            }
+
+            resultBox.innerHTML = htmlContent;
+
+            resultBox.style.borderColor = resultColor;
+            
+            document.getElementById('progress-bar').style.backgroundColor = resultColor;
+        }
+
+        function resetTool() {
+            for (let key in answers) {
+                answers[key] = null;
+            }
+            currentQuestionIndex = 0;
+
+            document.querySelectorAll('.answer-buttons button').forEach(btn => {
+                btn.classList.remove('selected');
+                btn.style.background = '#2C2C2C';
+                btn.style.color = '#E0E0E0';
+                btn.style.transform = 'none';
+                btn.style.boxShadow = '0 0 5px rgba(255, 255, 255, 0.1)';
+            });
+            
+            // Ensure all question containers are cleaned up and only the first is shown/highlighted
+            document.querySelectorAll('.question-container').forEach(q => {
+                q.classList.remove('hidden');
+                q.classList.remove('highlight');
+            });
+            
+            const resultBox = document.getElementById('result-box');
+            resultBox.innerHTML = '<h2 class="text-xl font-bold mb-2" style="color: #E0E0E0;">Suggested RFx:</h2><p id="rfx-result" class="text-2xl font-extrabold text-gray-500">Answer the first question to begin...</p>';
+            
+            resultBox.classList.remove('achievement-unlocked');
+            resultBox.style.borderColor = '#3A3A3A'; 
+            
+            document.getElementById('progress-bar').style.backgroundColor = getTailwindColor('procure-blue');
+
+            updateProgress();
+            showQuestion('q1'); // Explicitly show and highlight the first question
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // The external script loads the counter.
+            resetTool(); 
+        });
+
+        // --- EXPOSE FUNCTIONS GLOBALLY FOR HTML ONCLICK ---
+        window.setAnswer = setAnswer;
+        window.resetTool = resetTool;
+    </script>
+</body>
+</html>
