@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategic RFx Selector Tool | Procurement Decision Engine (RFI, RFP, RFQ, RFS)</title>
+    <meta name="description" content="Master strategic sourcing with the definitive RFx Selector Decision Tool. Quickly determine the best procurement methodology (RFI, RFP, RFQ, RFS) for any project goal: cost control, innovation, or market discovery. Achieve procurement maturity." />
+    <meta name="keywords" content="RFx selector, procurement decision tool, strategic sourcing, RFI, RFP, RFQ, RFS, procurement maturity, vendor selection, contract management, supply chain" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* KEYFRAMES */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* MODERN UI BASE STYLING (Glassmorphism Background) */
+        body { 
+            /* Use a gradient or vibrant background for the blur effect to work */
+            background: linear-gradient(135deg, #1f4287, #2ecc71, #f39c12);
+            color: #34495e;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            /* GLASS MORPHISM EFFECT */
+            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* Stronger elevation shadow */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 650px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        /* STATS CARD - Elevated */
+        #stats-card {
+            display: flex;
+            justify-content: space-between;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 15px 25px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Elevated look */
+        }
+        .stat-item {
+            text-align: center;
+            flex-basis: 48%;
+            padding: 5px 0;
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0044AA; /* Darker Blue Accent */
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        /* Question Blocks */
+        .question-container {
+            margin-bottom: 1.5rem;
+            padding: 1.25rem;
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly opaque white */
+            border: 1px solid rgba(200, 200, 200, 0.5);
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s, border-color 0.3s; /* Added transition for highlight */
+        }
+        /* New Highlight Style for Question Container */
+        .question-container.highlight {
+            border-color: #0077B6;
+            box-shadow: 0 0 10px rgba(0, 119, 182, 0.6); /* Blue outer glow/shadow */
+        }
+
+        .question-text { color: #34495e !important; }
+
+        /* Answer Buttons - Clean and Elevated */
+        .answer-buttons button {
+            background-color: #f0f0f0;
+            color: #34495e;
+            border: none;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease-in-out;
+        }
+        .answer-buttons button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .answer-buttons button.selected {
+            background-color: #0077B6; 
+            color: white; 
+            transform: translateY(0); 
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Final CTAs - Elevated Buttons */
+        .final-cta {
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s;
+            display: block; 
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .final-cta:hover { transform: translateY(-2px); }
+        
+        /* 1. Ghost/Outline Style for Reset Button */
+        .final-cta-ghost {
+            background-color: transparent !important;
+            color: #555 !important;
+            border: 2px solid #555;
+            box-shadow: none;
+        }
+        .final-cta-ghost:hover {
+            background-color: rgba(0,0,0,0.05) !important;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* 2. Custom LinkedIn Button Style */
+        .libutton {
+            background-color: #0A66C2 !important;
+            color: #ffffff !important;
+            height: 40px; 
+            border-radius: 16px; 
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            font-size: 16px;
+            margin-top: 12px;
+        }
+        
+        /* Result Box Overrides */
+        #result-box { 
+            border: 2px solid; 
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 16px; 
+            transition: all 0.5s ease-in-out;
+        }
+        
+        /* Rank/Badge Styling - Dynamic Color Blocks */
+        #rfx-rank {
+            border-radius: 6px; 
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.4); /* Stronger shadow */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            transition: all 0.5s;
+        }
+        
+        /* PROGRESS BAR */
+        #progress-bar-container {
+            border-radius: 10px;
+            background-color: rgba(0,0,0,0.1); 
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2); 
+            padding: 3px;
+        }
+        
+        /* ELABORATIVE GOAL STYLING */
+        .elaborative-goal {
+            text-align: left;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .elaborative-goal strong {
+            color: #0044AA;
+        }
+        /* Custom list style for emojis */
+        .elaborative-goal ul {
+            list-style-type: none; /* Remove default disc */
+            margin-left: 0;
+            padding-left: 0;
+            line-height: 1.6; /* Increased line spacing */
+            font-size: 0.95rem;
+            color: #34495e;
+        }
+        .elaborative-goal ul li {
+            margin-bottom: 8px; /* Space between points */
+            padding-left: 5px;
+        }
+
+        /* Hidden SEO text for crawlers */
+        .seo-text {
+            visibility: hidden;
+            opacity: 0;
+            height: 0;
+            width: 0;
+            overflow: hidden;
+            position: absolute;
+            font-size: 0;
+            color: #FFF; /* Use text color similar to background if possible */
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="main-wrapper">
+        <div class="container">
+            <!-- MINIMALIST HEADER -->
+            <h1 class="text-3xl font-extrabold text-procure-blue text-center mb-1" style="color: #0077B6;">RFx Selector Decision Tool</h1>
+            <p class="text-center text-gray-600 mb-8 text-lg">Find the right tool (RFI, RFP, RFQ, RFS) for any strategic sourcing goal.</p>
+            
+            <!-- Progress Bar -->
+            <div class="mb-6 mt-6">
+                <div class="text-sm font-medium text-gray-600 mb-1" id="progress-text">Progress: 0/4 Questions</div>
+                <div id="progress-bar-container" class="w-full h-3">
+                    <div id="progress-bar" class="h-full rounded-full" style="background-color: #0077B6; width: 0%; transition: width 0.3s;"></div>
+                </div>
+            </div>
+
+            <!-- Question Flow Container -->
+            <div id="question-flow" class="divide-y divide-transparent">
+                <!-- Question Block 1 - What to Buy -->
+                <div id="q1" class="question-container">
+                    <p class="question-text font-semibold">1. <strong>What to Buy:</strong> Do we know <strong>exactly what we need</strong> to buy (all specifications and requirements are final)?</p>
+                    <div class="answer-buttons flex space-x-4">
+                        <button data-q="q1" onclick="setAnswer('q1', 'Yes', this)" class="flex-1">Yes</button>
+                        <button data-q="q1" onclick="setAnswer('q1', 'No', this)" class="flex-1">No</button>
+                    </div>
+                </div>
+
+                <!-- Question Block 2 - Why We're Buying -->
+                <div id="q2" class="question-container hidden">
+                    <p class="question-text font-semibold">2. <strong>Why We're Buying:</strong> Is the main goal simply to get the **lowest, competitive price** for this item or service?</p>
+                    <div class="answer-buttons flex space-x-4">
+                        <button data-q="q2" onclick="setAnswer('q2', 'Yes', this)" class="flex-1">Yes</button>
+                        <button data-q="q2" onclick="setAnswer('q2', 'No', this)" class="flex-1">No</button>
+                    </div>
+                </div>
+
+                <!-- Question Block 3 - Future Focus -->
+                <div id="q3" class="question-container hidden">
+                    <p class="question-text font-semibold">3. <strong>Future Focus:</strong> Are we looking for **new ideas or creative solutions** from the supplier to solve a business problem?</p>
+                    <div class="answer-buttons flex space-x-4">
+                        <button data-q="q3" onclick="setAnswer('q3', 'Yes', this)" class="flex-1">Yes</button>
+                        <button data-q="q3" onclick="setAnswer('q3', 'No', this)" class="flex-1">No</button>
+                    </div>
+                </div>
+
+                <!-- Question Block 4 - Who to Ask -->
+                <div id="q4" class="question-container hidden">
+                    <p class="question-text font-semibold">4. <strong>Who to Ask:</strong> Do we **already know** which suppliers can deliver this, or do we need to search the market?</p>
+                    <div class="answer-buttons flex space-x-4">
+                        <button data-q="q4" onclick="setAnswer('q4', 'Yes', this)" class="flex-1">Yes</button>
+                        <button data-q="q4" onclick="setAnswer('q4', 'No', this)" class="flex-1">No</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Box -->
+            <div id="result-box" class="mt-8 p-5 rounded-xl text-center" style="border-color: #d1d5db;">
+                <h2 class="text-xl font-bold text-gray-700 mb-2">Suggested RFx:</h2>
+                <p id="rfx-result" class="text-2xl font-extrabold text-gray-500">Answer the first question to begin...</p>
+            </div>
+            
+            <!-- NEW STATS CARD (MOVED TO BOTTOM) -->
+            <div id="stats-card">
+                <!-- Total Visitors (Cumulative) -->
+                <div class="stat-item">
+                    <div class="stat-value" id="count-value">...</div>
+                    <div class="stat-label">Total Strategic Visits</div>
+                </div>
+                <!-- Daily Recommendations -->
+                <div class="stat-item">
+                    <div class="stat-value" id="result-count-value">...</div>
+                    <div class="stat-label">Recommendations Today (IST)</div>
+                </div>
+            </div>
+            <!-- End Stats Card -->
+
+            <!-- CREATIVE BUTTON ARRANGEMENT -->
+            
+            <!-- 1. Reset Button (Ghost Style - Muted Action) -->
+            <button id="reset-button" onclick="resetTool()" class="final-cta final-cta-ghost mt-6">
+                Start Over
+            </button>
+
+            <!-- 2. LinkedIn Follow Button (Primary CTA - Branded) -->
+            <a class="libutton" href="https://www.linkedin.com/in/bhsuryavanshi/" target="_blank">
+                Follow on LinkedIn
+            </a>
+            
+            <p class="text-center mt-6 text-sm text-gray-400">Source Smarter. Drive Value.</p>
+        </div>
+        
+        <!-- HIDDEN SEO KEYWORD BLOCK -->
+        <div class="seo-text">
+            <p>This decision engine guides professionals through the key stages of procurement maturity, from tactical execution to strategic partnership. Learn when to issue an RFI for market discovery, an RFQ for competitive pricing, an RFP for complex solutions, or an RFS for innovation and co-creation. Optimize your vendor selection process and drive enterprise value through strategic sourcing. Master contract management and achieve higher cost avoidance and supplier quality.</p>
+        </div>
+        <!-- END HIDDEN SEO KEYWORD BLOCK -->
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, updateDoc, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // --- NEW: Custom Color Map (Resolves ReferenceError) ---
+        const CUSTOM_COLORS = {
+            'flat-base': '#ecf0f1', 
+            'flat-dark': '#34495e',
+            'procure-blue': '#0077B6', 
+            'procure-green': '#00A896', 
+            'rfi-color': '#F3C641', // Gold/Yellow
+            'rfp-color': '#0077B6', // Deep Blue
+            'rfq-color': '#00A896', // Teal
+            'rfs-color': '#7A52A1', // Purple
+        };
+
+        function getTailwindColor(colorKey) {
+            return CUSTOM_COLORS[colorKey] || '#6b7280'; 
+        }
+        
+        // --- FIREBASE SETUP ---
+        let db = null;
+        let auth = null;
+        let appId = null;
+        let firebaseConfig = null;
+        
+        // Global variables provided by the environment
+        const __app_id = typeof window.__app_id !== 'undefined' ? window.__app_id : 'default-app-id';
+        const __firebase_config = typeof window.__firebase_config !== 'undefined' ? window.__firebase_config : '{}';
+        const __initial_auth_token = typeof window.__initial_auth_token !== 'undefined' ? window.__initial_auth_token : null;
+
+        const VISITOR_SESSION_KEY = 'rfx-tool-vcounted';
+        const COUNTER_PATH = `/artifacts/${__app_id}/public/data/rfx_tool_stats/visitor_count`;
+        
+        // Function to get the current date string based on IST (UTC + 5:30)
+        function getISTDateString() {
+            const now = new Date();
+            const istOffset = 5.5 * 60; // 330 minutes
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const ist = new Date(utc + (60000 * istOffset));
+            return ist.toISOString().slice(0, 10);
+        }
+
+        async function initializeFirebase() {
+            try {
+                // --- Set immediate loading state ---
+                document.getElementById('count-value').textContent = "Connecting...";
+                document.getElementById('result-count-value').textContent = "Connecting...";
+
+                // Check and parse config
+                firebaseConfig = JSON.parse(__firebase_config);
+                appId = __app_id;
+
+                if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
+                    throw new Error("Firebase configuration is empty. Ensure setup is complete.");
+                }
+                
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                if (__initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                
+                // --- Use onSnapshot for real-time reliable data flow ---
+                setupVisitorCountListener();
+                setupDailyUsesListener();
+                
+                // Immediately attempt to increment the visitor count
+                await attemptIncrementVisitorCount();
+
+            } catch (error) {
+                console.error("Critical Firebase initialization error. Check console for details.", error);
+                document.getElementById('count-value').textContent = "Error";
+                document.getElementById('result-count-value').textContent = "Error";
+            }
+        }
+        
+        function setupVisitorCountListener() {
+            if (!db) return;
+            const counterRef = doc(db, COUNTER_PATH);
+            
+            onSnapshot(counterRef, (docSnap) => {
+                let currentCount = 0;
+                if (docSnap.exists()) {
+                    currentCount = docSnap.data().count || 0;
+                }
+                document.getElementById('count-value').textContent = currentCount.toLocaleString();
+            }, (error) => {
+                console.error("Error setting up visitor count listener. Check Rules/Path!", error);
+                document.getElementById('count-value').textContent = "Error";
+            });
+        }
+
+        async function attemptIncrementVisitorCount() {
+            if (!db || !auth) return;
+
+            const counterRef = doc(db, COUNTER_PATH);
+            const isCounted = sessionStorage.getItem(VISITOR_SESSION_KEY);
+
+            if (!isCounted) {
+                try {
+                    // Attempt to increment the counter
+                    await updateDoc(counterRef, { count: increment(1) });
+                    sessionStorage.setItem(VISITOR_SESSION_KEY, 'true');
+                } catch (e) {
+                    if (e.code === 'not-found') {
+                         try {
+                            // If document doesn't exist, create it with count = 1
+                            await setDoc(counterRef, { count: 1 });
+                            sessionStorage.setItem(VISITOR_SESSION_KEY, 'true');
+                         } catch (e2) {
+                            console.error("Error setting initial visitor count:", e2);
+                         }
+                    } else if (e.code === 'permission-denied') {
+                         console.error("Permission Denied for visitor increment. FIX FIREBASE RULES!");
+                    } else {
+                        console.error("Error incrementing visitor count:", e);
+                    }
+                }
+            }
+        }
+        
+        function setupDailyUsesListener() {
+            if (!db) return;
+            const istDate = getISTDateString();
+            const dailyPath = `/artifacts/${appId}/public/data/rfx_daily_analytics/${istDate}`;
+            const dailyRef = doc(db, dailyPath);
+
+            onSnapshot(dailyRef, (docSnap) => {
+                let currentCount = 0;
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    currentCount = (data.rfi_count || 0) + 
+                                   (data.rfp_count || 0) + 
+                                   (data.rfq_count || 0) + 
+                                   (data.rfs_count || 0);
+                }
+                document.getElementById('result-count-value').textContent = currentCount.toLocaleString();
+            }, (error) => {
+                 console.error("Error setting up daily uses listener. Check Rules/Path!", error);
+                 document.getElementById('result-count-value').textContent = "Error";
+            });
+        }
+
+        async function trackRFxResult(result) {
+            if (!db || !auth) return;
+            
+            const istDate = getISTDateString();
+            const dailyPath = `/artifacts/${appId}/public/data/rfx_daily_analytics/${istDate}`;
+            const dailyRef = doc(db, dailyPath);
+
+            let fieldToIncrement = '';
+            if (result.includes('RFI')) fieldToIncrement = 'rfi_count';
+            else if (result.includes('RFP')) fieldToIncrement = 'rfp_count';
+            else if (result.includes('RFQ')) fieldToIncrement = 'rfq_count';
+            else if (result.includes('RFS')) fieldToIncrement = 'rfs_count';
+
+            if (fieldToIncrement) {
+                try {
+                    // Attempt to update the daily count
+                    await updateDoc(dailyRef, { [fieldToIncrement]: increment(1) });
+                } catch (e) {
+                    if (e.code === 'not-found') {
+                        // If document doesn't exist, create it with the first count
+                        await setDoc(dailyRef, { date: istDate, unique_visits: 0, rfi_count: 0, rfp_count: 0, rfq_count: 0, rfs_count: 0, [fieldToIncrement]: 1 });
+                    } else if (e.code === 'permission-denied') {
+                         console.error("Permission Denied for result tracking. FIX FIREBASE RULES!");
+                    } else {
+                         console.error("Error tracking RFx result:", e);
+                    }
+                }
+            }
+        }
+
+        // --- CORE RFX LOGIC ---
+        
+        const answers = { q1: null, q2: null, q3: null, q4: null };
+        const questionOrder = ['q1', 'q2', 'q3', 'q4'];
+        const totalQuestions = questionOrder.length;
+        let currentQuestionIndex = 0;
+
+        const resultColors = {
+            "RFI (Request for Information)": 'rfi-color',
+            "RFP (Request for Proposal)": 'rfp-color',
+            "RFQ (Request for Quotation)": 'rfq-color',
+            "RFS (Request for Solution)": 'rfs-color'
+        };
+        
+        const rfxRanks = {
+            "RFI (Request for Information)": { name: "Discovery Lead", color: 'rfi-color', icon: "🔍" },
+            "RFQ (Request for Quotation)": { name: "Execution Specialist", color: 'rfq-color', icon: "💰" },
+            "RFP (Request for Proposal)": { name: "Value Integrator", color: 'rfp-color', icon: "🏗️" },
+            "RFS (Request for Solution)": { name: "Innovation Partner", color: 'rfs-color', icon: "🚀" }
+        };
+
+        function updateProgress() {
+            const answeredCount = Object.values(answers).filter(a => a !== null).length;
+            const percentage = (answeredCount / totalQuestions) * 100;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+            document.getElementById('progress-text').textContent = `Progress: ${answeredCount}/${totalQuestions} Questions`;
+        }
+
+        function showQuestion(id) {
+            // Remove highlight from all containers before showing the next one
+            document.querySelectorAll('.question-container').forEach(q => q.classList.remove('highlight'));
+            document.querySelectorAll('.question-container').forEach(q => q.classList.add('hidden'));
+            
+            const target = document.getElementById(id);
+            if (target) {
+                target.classList.remove('hidden');
+                target.classList.add('highlight'); // Highlight the active tab
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function setAnswer(questionId, answer, buttonElement) {
+            answers[questionId] = answer;
+            
+            const qDiv = document.getElementById(questionId);
+            qDiv.querySelectorAll('button').forEach(btn => {
+                btn.classList.remove('selected');
+                // Reset to default button style
+                btn.style.background = 'linear-gradient(180deg, #F9FAFB, #ECF0F1)';
+                btn.style.color = '#34495e';
+                btn.style.transform = 'none';
+                btn.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+            });
+
+            // Apply selected button style
+            buttonElement.classList.add('selected');
+            buttonElement.style.transform = 'translateY(1px)'; 
+            buttonElement.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.3)';
+            buttonElement.style.background = getTailwindColor('procure-blue'); 
+            buttonElement.style.color = 'white'; 
+            
+            updateProgress();
+
+            const answeredCount = Object.values(answers).filter(a => a !== null).length;
+            
+            if (answeredCount === totalQuestions) {
+                // Remove highlight from the last question
+                qDiv.classList.remove('highlight');
+                // Ensure the final question is shown, then determine the result
+                showQuestion(questionId); 
+                determineRFx();
+            } else {
+                currentQuestionIndex = questionOrder.indexOf(questionId);
+                if (currentQuestionIndex < totalQuestions - 1) {
+                    // Remove highlight from the just-answered question
+                    qDiv.classList.remove('highlight');
+                    showQuestion(questionOrder[currentQuestionIndex + 1]);
+                }
+            }
+        }
+
+        function determineRFx() {
+            const C_SCOPE = answers.q1;
+            const C_PRICE = answers.q2;
+            const C_INNOVATE = answers.q3;
+            const C_KNOW_SUPPLIERS = answers.q4;
+
+            let primaryResult = "RFP (Request for Proposal)"; 
+            let stagedProcess = null;
+
+            if (C_SCOPE === "Yes" && C_PRICE === "Yes") {
+                primaryResult = "RFQ (Request for Quotation)";
+            }
+            else if (C_SCOPE === "No" && C_INNOVATE === "Yes") {
+                primaryResult = "RFS (Request for Solution)";
+            }
+            else if (C_SCOPE === "No" && C_KNOW_SUPPLIERS === "No") {
+                primaryResult = "RFI (Request for Information)";
+                stagedProcess = "RFI → RFP (or RFQ)";
+            }
+            
+            // Hide all questions and show only the result box content
+            document.querySelectorAll('.question-container').forEach(q => q.classList.add('hidden'));
+            
+            addContextAndWarning(primaryResult, stagedProcess, C_SCOPE, C_PRICE, C_INNOVATE);
+            
+            trackRFxResult(primaryResult);
+        }
+
+        function addContextAndWarning(primaryResult, stagedProcess, C_SCOPE, C_PRICE, C_INNOVATE) {
+            
+            const rank = rfxRanks[primaryResult];
+            const resultColor = getTailwindColor(rank.color);
+            
+            let htmlContent = '';
+            let warning = "";
+
+            const resultBox = document.getElementById('result-box');
+            resultBox.classList.add('achievement-unlocked'); // Always add for flair
+
+            // 1. Rank & Result Name
+            htmlContent += `<div id="rfx-rank" style="background-color: ${resultColor}; color: white; margin: 0 auto; border-radius: 6px; padding: 12px 25px; font-weight: 800; font-size: 1.3em; letter-spacing: 0.05em; text-transform: uppercase; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);">${rank.icon} ACHIEVEMENT UNLOCKED: ${rank.name}</div>`;
+            
+            htmlContent += `
+                <h2 class="text-xl font-bold text-gray-700 mb-2 mt-5">Suggested RFx:</h2>
+                <p id="rfx-result" class="text-4xl font-extrabold" style="color: ${resultColor};">${primaryResult}</p>
+            `;
+            
+            // 2. Elaborative Goal Section (NEW - Restored detailed list)
+            let goalHTML = '';
+            const goals = {
+                "RFI (Request for Information)": {
+                    title: "Goal: Market Discovery and Intelligence",
+                    bullets: [
+                        "🔍 Identify all potential suppliers and their core capabilities.",
+                        "🧭 Gather general market pricing, technology, and trend insights.",
+                        "📜 Build a qualified shortlist for follow-up tenders (RFP/RFQ).",
+                        "📄 Use <strong>standardized questionnaires</strong> focused on qualifications and experience, not price.",
+                        "🔔 <strong>Formally close the RFI</strong> and notify non-shortlisted vendors of next steps."
+                    ]
+                },
+                "RFQ (Request for Quotation)": {
+                    title: "Goal: Efficiency and Cost Control",
+                    bullets: [
+                        "💰 Achieve the <strong>lowest compliant price</strong> for standardized goods/services.",
+                        "⏱️ Minimize transactional procurement cycle time through automation.",
+                        "✅ Ensure <strong>strict adherence</strong> to non-negotiable specifications and quality standards.",
+                        "💻 Use <strong>e-sourcing or reverse auctions</strong> for rapid price discovery and negotiation.",
+                        "🎯 <strong>Award automatically</strong> based on price, assuming compliance (3-bids-and-buy)."
+                    ]
+                },
+                "RFP (Request for Proposal)": {
+                    title: "Goal: Complex Solution Development",
+                    bullets: [
+                        "🏗️ Compare technical methodology, implementation plans, and unique value propositions.",
+                        "📋 Evaluate solutions where scope is clear, but the approach is complex.",
+                        "🤝 Select the partner offering the best overall value, weighing quality and risk over pure cost.",
+                        "📊 Implement a <strong>weighted scoring matrix</strong> involving multiple stakeholders (e.g., IT, Legal).",
+                        "🎬 Conduct <strong>supplier demonstrations</strong> or Proofs of Concept (POCs) before final award."
+                    ]
+                },
+                "RFS (Request for Solution)": {
+                    title: "Goal: Strategic Problem Solving and Innovation",
+                    bullets: [
+                        "💡 Source creative, outcome-focused solutions to defined business problems.",
+                        "📈 Tap into supplier expertise to develop a novel, long-term strategy.",
+                        "⭐ Establish a partnership based on mutual value creation and shared risk/reward.",
+                        "⚖️ Structure the evaluation criteria around <strong>potential business impact and ROI</strong>, not fixed price.",
+                        "🗺️ Co-create a <strong>joint success roadmap</strong> with the selected partner <i>before</i> contract execution."
+                    ]
+                }
+            };
+
+            const selectedGoal = goals[primaryResult];
+            if (selectedGoal) {
+                goalHTML += `<div class="elaborative-goal">`;
+                goalHTML += `<strong>${selectedGoal.title}</strong>`;
+                goalHTML += `<ul>`;
+                selectedGoal.bullets.forEach(bullet => {
+                    goalHTML += `<li>${bullet}</li>`;
+                });
+                goalHTML += `</ul></div>`;
+            }
+            
+            htmlContent += goalHTML;
+
+
+            // 3. Warning/Advanced Tip Section
+            const contextMap = {
+                "RFQ (Request for Quotation)": {
+                    warning: C_INNOVATE === "Yes" ? "WARNING: This tool is too simple for innovation. The supplier will deliver exactly what you asked for, not necessarily the best solution. Reconsider RFS." : ""
+                },
+                "RFP (Request for Proposal)": {
+                    warning: C_SCOPE === "No" ? "CAUTION: Since specs aren't 100% clear, ensure your evaluation criteria heavily weight technical methodology over price." : ""
+                },
+                "RFS (Request for Solution)": {
+                    warning: C_PRICE === "Yes" ? "WARNING: Don't anchor on lowest price. RFS is about value creation; focusing only on cost will stifle innovation." : ""
+                },
+                "RFI (Request for Information)": {
+                    warning: C_PRICE === "Yes" ? "WARNING: Do NOT use RFI to set prices. It provides directional cost only. Follow up with an RFQ or RFP." : ""
+                }
+            };
+            
+            warning = contextMap[primaryResult].warning;
+
+            if (stagedProcess) {
+                htmlContent += `<div class="staged-process mt-4 p-3 rounded-md font-semibold" style="border: 1px dashed ${resultColor}; color: ${getTailwindColor('flat-dark')}; background-color: #F0F8FF;">💡 <strong>ADVANCED TIP:</strong> Consider a staged process: <strong>${stagedProcess}</strong> to manage risk and increase competition.</div>`;
+            }
+
+            if (warning) {
+                htmlContent += `<div class="warning-box mt-4 p-3 rounded-md font-semibold" style="border: 1px dashed #C0392B; color: #C0392B; background-color: #FFF3F3;">⚠️ <strong>Maturity Warning:</strong> ${warning}</div>`;
+            }
+
+            resultBox.innerHTML = htmlContent;
+
+            resultBox.style.borderColor = resultColor;
+            
+            document.getElementById('progress-bar').style.backgroundColor = resultColor;
+        }
+
+        function resetTool() {
+            for (let key in answers) {
+                answers[key] = null;
+            }
+            currentQuestionIndex = 0;
+
+            document.querySelectorAll('.answer-buttons button').forEach(btn => {
+                btn.classList.remove('selected');
+                btn.style.background = 'linear-gradient(180deg, #F9FAFB, #ECF0F1)';
+                btn.style.color = '#34495e';
+                btn.style.transform = 'none';
+                btn.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+            });
+            
+            // Ensure all question containers are cleaned up and only the first is shown/highlighted
+            document.querySelectorAll('.question-container').forEach(q => {
+                q.classList.remove('hidden');
+                q.classList.remove('highlight');
+            });
+            
+            const resultBox = document.getElementById('result-box');
+            resultBox.innerHTML = '<h2 class="text-xl font-bold text-gray-700 mb-2">Suggested RFx:</h2><p id="rfx-result" class="text-2xl font-extrabold text-gray-500">Answer the first question to begin...</p>';
+            
+            resultBox.classList.remove('achievement-unlocked');
+            resultBox.style.borderColor = '#d1d5db'; 
+            
+            document.getElementById('progress-bar').style.backgroundColor = getTailwindColor('procure-blue');
+
+            updateProgress();
+            showQuestion('q1'); // Explicitly show and highlight the first question
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeFirebase(); 
+            resetTool(); 
+        });
+
+        // --- EXPOSE FUNCTIONS GLOBALLY FOR HTML ONCLICK ---
+        window.setAnswer = setAnswer;
+        window.resetTool = resetTool;
+    </script>
+</body>
+</html>
